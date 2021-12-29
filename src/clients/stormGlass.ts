@@ -23,10 +23,10 @@ export interface StormGlassForecastResponse {
 
 export interface ForeCastPoint {
   readonly time: string;
-  readonly waveHeigth: number;
+  readonly waveHeight: number;
   readonly waveDirection: number;
   readonly swellDirection: number;
-  readonly swellHeigth: number;
+  readonly swellHeight: number;
   readonly swellPeriod: number;
   readonly windDirection: number;
   readonly windSpeed: number;
@@ -80,10 +80,10 @@ export class StormGlass {
   ): ForeCastPoint[] {
     return points.hours.filter(this.isValidPoint.bind(this)).map((point) => ({
       time: point.time,
-      waveHeigth: point.waveHeight[this.source],
+      waveHeight: point.waveHeight[this.source],
       waveDirection: point.waveDirection[this.source],
       swellDirection: point.swellDirection[this.source],
-      swellHeigth: point.swellHeight[this.source],
+      swellHeight: point.swellHeight[this.source],
       swellPeriod: point.swellPeriod[this.source],
       windDirection: point.windDirection[this.source],
       windSpeed: point.windSpeed[this.source],
