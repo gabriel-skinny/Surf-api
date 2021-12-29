@@ -1,5 +1,4 @@
 import { ForeCastPoint, StormGlass } from "@src/clients/stormGlass";
-import { nextTick } from "process";
 
 export enum BeachPosition {
   S = 'S',
@@ -26,17 +25,19 @@ export class Forecast {
   async processForeCastForBeaches(beaches: Beach[]): Promise<BechWithPoints[]> {
     let pointsWithCorrectSources:BechWithPoints[] = [];
 
-    beaches.map(async beach => {
+    for(const beach of beaches) {
       const stormGlassPoints = await this.stormGlass.fetchPoints(beach.lat, beach.lng);
 
       stormGlassPoints.map(point => {
-        pointsWithCorrectSources.push({...point, ...beach, rating: 1});
+        pointsWithCorrectSources.push({...point, ... {
+          lat: beach.lat,
+          lng: beach.lng,
+          position: beach.position,
+          name: beach.name,
+          rating: 1,
+        }});
       })
-
-      console.log("AQUI 2");
-    }) 
-
-    console.log("AQUI")
+  }
 
     return pointsWithCorrectSources;
   }
