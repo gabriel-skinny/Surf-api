@@ -1,7 +1,7 @@
-import { Beach } from "@src/models/beach"
+import { BeachDb } from "@src/models/beach"
 
 describe("Beaches functional tests", () => {
-  beforeAll(async () => await Beach.deleteMany({}))
+  beforeAll(async () => await BeachDb.deleteMany({}))
   
   describe("When creating a beach", () => {
     it("should create a beach with success", async() => {
@@ -44,7 +44,7 @@ describe("Beaches functional tests", () => {
         position: "E"
       }
 
-      const mockFn = jest.spyOn(Beach.prototype, "save");
+      const mockFn = jest.spyOn(BeachDb.prototype, "save");
       mockFn.mockRejectedValue(() => {});
 
       const response = await global.testRequest.post("/beaches").send(newBeach);

@@ -1,5 +1,5 @@
 import { Controller, Post } from "@overnightjs/core";
-import { Beach } from "@src/models/beach";
+import { BeachDb } from "@src/models/beach";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 
@@ -8,7 +8,7 @@ export class BeachController {
   @Post("")
   public async createBeach(req: Request, res: Response): Promise<void> {
     try {
-      const beach = new Beach(req.body);
+      const beach = new BeachDb(req.body);
       const result = await beach.save();
       
 
