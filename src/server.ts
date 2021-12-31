@@ -1,8 +1,8 @@
+import './util/module-alias';
 import { Server } from '@overnightjs/core';
 import bodyParser from 'body-parser';
 import { Application } from 'express';
 import { ForeCastController } from './controllers/forecast';
-import './util/module-alias';
 import * as database from "@src/database";
 import { BeachController } from './controllers/beaches';
 
@@ -37,5 +37,11 @@ export class SetupServer extends Server {
 
   public getApp(): Application {
     return this.app;
+  }
+
+  public start(): void {
+    this.app.listen(this.port, () => {
+      console.info(`Server in running in this port: ${this.port}`);
+    })
   }
 }
