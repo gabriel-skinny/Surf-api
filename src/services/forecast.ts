@@ -1,12 +1,11 @@
-import { ForeCastPoint, StormGlass } from "@src/clients/stormGlass";
-import { Beach } from "@src/models/beach";
-import { InternalError } from "@src/util/internal-errors";
+import { ForeCastPoint, StormGlass } from '@src/clients/stormGlass';
+import { Beach } from '@src/models/beach';
+import { InternalError } from '@src/util/internal-errors';
 
 export interface TimeForecast {
   time: string;
   forecast: BeachWithPoints[];
 }
-
 
 export interface BeachWithPoints extends Omit<Beach, 'user'>, ForeCastPoint {
   rating: number;
@@ -14,56 +13,62 @@ export interface BeachWithPoints extends Omit<Beach, 'user'>, ForeCastPoint {
 
 export class ForecastProcessingInternalError extends InternalError {
   constructor(message: string) {
-    const internalMessage = "Unexpected error durring the forecast processing";
+    const internalMessage = 'Unexpected error durring the forecast processing';
     super(`${internalMessage}: ${message}`);
   }
 }
 
-
 export class Forecast {
-  constructor(private stormGlass = new StormGlass()) {};
+  constructor(private stormGlass = new StormGlass()) {}
 
   async processForeCastForBeaches(beaches: Beach[]): Promise<TimeForecast[]> {
-    let pointsWithCorrectSources:BeachWithPoints[] = [];
+    let pointsWithCorrectSources: BeachWithPoints[] = [];
 
     try {
-      for(const beach of beaches) {
-        const stormGlassPoints = await this.stormGlass.fetchPoints(beach.lat, beach.lng);
+      for (const beach of beaches) {
+        const stormGlassPoints = await this.stormGlass.fetchPoints(
+          beach.lat,
+          beach.lng
+        );
 
-        pointsWithCorrectSources.push(...this.enrichData(stormGlassPoints, beach));
-    }
+        pointsWithCorrectSources.push(
+          ...this.enrichData(stormGlassPoints, beach)
+        );
+      }
 
-    return this.mapForecastByTime(pointsWithCorrectSources);
-  }catch(err: any){
+      return this.mapForecastByTime(pointsWithCorrectSources);
+    } catch (err: any) {
       throw new ForecastProcessingInternalError(err.message);
     }
-
   }
 
   private enrichData(points: ForeCastPoint[], beach: Beach): BeachWithPoints[] {
-    return points.map(point => (
-      {...point, ... {
+    return points.map((point) => ({
+      ...point,
+      ...{
         lat: beach.lat,
         lng: beach.lng,
         position: beach.position,
         name: beach.name,
         rating: 1,
-      }
-    }))
+      },
+    }));
   }
 
   private mapForecastByTime(forecast: BeachWithPoints[]): TimeForecast[] {
     const forecastByTime: TimeForecast[] = [];
     for (const point of forecast) {
-      const timePoint = forecastByTime.find(field => field.time === point.time);
+      const timePoint = forecastByTime.find(
+        (field) => field.time === point.time
+      );
 
-      if(timePoint) {
+      if (timePoint) {
         timePoint.forecast.push(point);
       } else {
         forecastByTime.push({
           time: point.time,
-          forecast: [point]
-        })
+          forecast: [point],
+        });
       }
     }
 

@@ -7,10 +7,11 @@ jest.mock('@src/clients/stormGlass');
 
 describe('Forecast Service', () => {
   const mockedStormGlassService = new StormGlass() as jest.Mocked<StormGlass>;
-  
+
   it('should return the forecast for a list of beaches', async () => {
-    mockedStormGlassService.fetchPoints
-      .mockResolvedValue(stormGlassNormalizedResponseFixture);
+    mockedStormGlassService.fetchPoints.mockResolvedValue(
+      stormGlassNormalizedResponseFixture
+    );
     const beaches: Beach[] = [
       {
         lat: -33.792726,
@@ -37,8 +38,8 @@ describe('Forecast Service', () => {
             waveHeight: 0.47,
             windDirection: 299.45,
             windSpeed: 100,
-          }
-        ]
+          },
+        ],
       },
       {
         time: '2020-04-26T01:00:00+00:00',
@@ -58,59 +59,59 @@ describe('Forecast Service', () => {
             windDirection: 310.48,
             windSpeed: 100,
           },
-        ]
+        ],
       },
       {
         time: '2020-04-26T02:00:00+00:00',
         forecast: [
           {
             lat: -33.792726,
-          lng: 151.289824,
-          name: 'Manly',
-          position: 'E',
-          rating: 1,
-          swellDirection: 182.56,
-          swellHeight: 0.28,
-          swellPeriod: 3.44,
-          time: '2020-04-26T02:00:00+00:00',
-          waveDirection: 232.86,
-          waveHeight: 0.46,
-          windDirection: 321.5,
-          windSpeed: 100,
+            lng: 151.289824,
+            name: 'Manly',
+            position: 'E',
+            rating: 1,
+            swellDirection: 182.56,
+            swellHeight: 0.28,
+            swellPeriod: 3.44,
+            time: '2020-04-26T02:00:00+00:00',
+            waveDirection: 232.86,
+            waveHeight: 0.46,
+            windDirection: 321.5,
+            windSpeed: 100,
           },
-        ]
-      } 
+        ],
+      },
     ];
     const forecast = new Forecast(mockedStormGlassService);
     const beachesWithRating = await forecast.processForeCastForBeaches(beaches);
     expect(beachesWithRating).toEqual(expectedResponse);
   });
 
-  it("should return an empty list when the beaches array is empty", async() => {
+  it('should return an empty list when the beaches array is empty', async () => {
     const forecast = new Forecast();
     const response = await forecast.processForeCastForBeaches([]);
 
     expect(response).toEqual([]);
-  })
-
-  it("Should throw internal processing error when something goes wrong", async () => {
-    const beaches: Beach[] = [
-      {
-      lat: -33.792726,
-      lng: 151.289824,
-      name: 'Manly',
-      position: BeachPosition.E,
-    }
-  ]
-
-  mockedStormGlassService.fetchPoints.mockRejectedValue({
-    message: "Error fetching data"
   });
 
-  const forecast = new Forecast(mockedStormGlassService);
-  
-  await expect(forecast.processForeCastForBeaches(beaches)).rejects.toThrow(
-    ForecastProcessingInternalError
-  );
-  })
+  it('Should throw internal processing error when something goes wrong', async () => {
+    const beaches: Beach[] = [
+      {
+        lat: -33.792726,
+        lng: 151.289824,
+        name: 'Manly',
+        position: BeachPosition.E,
+      },
+    ];
+
+    mockedStormGlassService.fetchPoints.mockRejectedValue({
+      message: 'Error fetching data',
+    });
+
+    const forecast = new Forecast(mockedStormGlassService);
+
+    await expect(forecast.processForeCastForBeaches(beaches)).rejects.toThrow(
+      ForecastProcessingInternalError
+    );
+  });
 });
