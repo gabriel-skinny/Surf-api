@@ -1,6 +1,6 @@
 import { InternalError } from '@src/util/internal-errors';
-import config, { IConfig } from "config";
-import * as HTTPUTIL from "@src/util/request";
+import config, { IConfig } from 'config';
+import * as HTTPUTIL from '@src/util/request';
 
 export interface StormGlassPointSource {
   [key: string]: number;
@@ -34,7 +34,8 @@ export interface ForeCastPoint {
 
 export class ClientRequestError extends InternalError {
   constructor(message: string) {
-    const internalMessage = 'Unexpected error when trying to communicate to StormGlass'
+    const internalMessage =
+      'Unexpected error when trying to communicate to StormGlass';
     super(`${internalMessage}: ${message}`);
   }
 }
@@ -46,7 +47,9 @@ export class ServiceResponseError extends InternalError {
   }
 }
 
-const stormGlassResourceConfig: IConfig = config.get('App.resources.StormGlass')
+const stormGlassResourceConfig: IConfig = config.get(
+  'App.resources.StormGlass'
+);
 
 export class StormGlass {
   readonly stormGlassAPIParams =
@@ -58,18 +61,24 @@ export class StormGlass {
   public async fetchPoints(lat: number, lng: number): Promise<ForeCastPoint[]> {
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
-        `${stormGlassResourceConfig.get("apiUrl")}/weather/point?params=${this.stormGlassAPIParams}&source=${this.source}&lat=${lat}&lng=${lng}`,
+        `${stormGlassResourceConfig.get('apiUrl')}/weather/point?params=${
+          this.stormGlassAPIParams
+        }&source=${this.source}&lat=${lat}&lng=${lng}`,
         {
           headers: {
-            Authorization: stormGlassResourceConfig.get("apiToken"),
+            Authorization: stormGlassResourceConfig.get('apiToken'),
           },
         }
       );
-      
+
       return this.normalizeResponse(response.data);
-    }catch(err: any) {
+    } catch (err: any) {
       if (HTTPUTIL.Request.isRequestError(err)) {
-        throw new ServiceResponseError(`Error ${JSON.stringify(err.response.data)} Code: ${err.response.status}`)
+        throw new ServiceResponseError(
+          `Error ${JSON.stringify(err.response.data)} Code: ${
+            err.response.status
+          }`
+        );
       }
       throw new ClientRequestError(err.message);
     }
