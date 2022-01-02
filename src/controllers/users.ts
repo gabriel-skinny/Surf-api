@@ -39,6 +39,6 @@ export class UsersController extends BaseController {
 
     const token = Auth.generateToken(user.toJSON());
 
-    return res.status(200).send({token: "Fake-token"});
+    return res.status(200).send({token});
   }
 }
